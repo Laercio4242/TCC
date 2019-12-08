@@ -1,13 +1,13 @@
 #include <Wire.h> //INCLUSÃO DA BIBLIOTECA
 #include "RTClib.h" //INCLUSÃO DA BIBLIOTECA
-#include <LiquidCrystal_I2C.h>
+#include <LiquidCrystal_I2C.h> //INCLUSÃO DA BIBLIOTECA
 
-LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x27,20,4); // set the LCD address to 0x27 for a 16 chars and 2 line display
 
 RTC_DS3231 rtc; //OBJETO DO TIPO RTC_DS3231
 
 //DECLARAÇÃO DOS DIAS DA SEMANA
-char daysOfTheWeek[7][12] = {"Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"};
+char daysOfTheWeek[7][12] = {"Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"};
 
 void setup(){
   Serial.begin(9600); //INICIALIZA A SERIAL
@@ -19,51 +19,32 @@ void setup(){
     Serial.println("DS3231 OK!"); //IMPRIME O TEXTO NO MONITOR SERIAL
     //REMOVA O COMENTÁRIO DE UMA DAS LINHAS ABAIXO PARA INSERIR AS INFORMAÇÕES ATUALIZADAS EM SEU RTC
     //rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); //CAPTURA A DATA E HORA EM QUE O SKETCH É COMPILADO
-    //rtc.adjust(DateTime(2018, 9, 29, 15, 00, 45)); //(ANO), (MÊS), (DIA), (HORA), (MINUTOS), (SEGUNDOS)
+    rtc.adjust(DateTime(2019, 12, 09, 00, 00, 00)); //(ANO), (MÊS), (DIA), (HORA), (MINUTOS), (SEGUNDOS)
   }
-
-  lcd.begin (16,2);                               //Inicializa LCD I2C
-  Serial.begin(115200);                           //Inicializa serial em 115200 baud rate
-
   delay(100); //INTERVALO DE 100 MILISSEGUNDOS
+  lcd.init(); // initialize the lcd 
+  lcd.init();
 }
 
 void loop () {
     DateTime now = rtc.now(); //CHAMADA DE FUNÇÃO
-    Serial.print("Data: "); //IMPRIME O TEXTO NO MONITOR SERIAL
-    Serial.print(now.day(), DEC); //IMPRIME NO MONITOR SERIAL O DIA
-    Serial.print('/'); //IMPRIME O CARACTERE NO MONITOR SERIAL
-    Serial.print(now.month(), DEC); //IMPRIME NO MONITOR SERIAL O MÊS
-    Serial.print('/'); //IMPRIME O CARACTERE NO MONITOR SERIAL
-    Serial.print(now.year(), DEC); //IMPRIME NO MONITOR SERIAL O ANO
-    Serial.print(" / Dia: "); //IMPRIME O TEXTO NA SERIAL
-    Serial.print(daysOfTheWeek[now.dayOfTheWeek()]); //IMPRIME NO MONITOR SERIAL O DIA
-    Serial.print(" / Horas: "); //IMPRIME O TEXTO NA SERIAL
-    Serial.print(now.hour(), DEC); //IMPRIME NO MONITOR SERIAL A HORA
-    Serial.print(':'); //IMPRIME O CARACTERE NO MONITOR SERIAL
-    Serial.print(now.minute(), DEC); //IMPRIME NO MONITOR SERIAL OS MINUTOS
-    Serial.print(':'); //IMPRIME O CARACTERE NO MONITOR SERIAL
-    Serial.print(now.second(), DEC); //IMPRIME NO MONITOR SERIAL OS SEGUNDOS
-    Serial.println(); //QUEBRA DE LINHA NA SERIAL
 
+    // Print a message to the LCD.
+    lcd.backlight();
     lcd.setCursor(0,0);
-    lcd.print("Data: "); //IMPRIME O TEXTO NO MONITOR SERIAL
-    lcd.print(now.day(), DEC); //IMPRIME NO MONITOR SERIAL O DIA
-    lcd.print('/'); //IMPRIME O CARACTERE NO MONITOR SERIAL
-    lcd.print(now.month(), DEC); //IMPRIME NO MONITOR SERIAL O MÊS
-    lcd.print('/'); //IMPRIME O CARACTERE NO MONITOR SERIAL
-    lcd.print(now.year(), DEC); //IMPRIME NO MONITOR SERIAL O ANO
-    lcd.print(" / Dia: "); //IMPRIME O TEXTO NA SERIAL
-    lcd.setCursor(3,1);
-    lcd.print(daysOfTheWeek[now.dayOfTheWeek()]); //IMPRIME NO MONITOR SERIAL O DIA
-    lcd.print(" / Horas: "); //IMPRIME O TEXTO NA SERIAL
+    lcd.print("Data: "); //IMPRIME O TEXTO NO DISPLAY
+    lcd.print(now.day(), DEC); //IMPRIME NO DISPLAY O DIA
+    lcd.print('/'); //IMPRIME O CARACTERE NO DISPLAY
+    lcd.print(now.month(), DEC); //IMPRIME NO DISPLAY O MÊS
+    lcd.print('/'); //IMPRIME O CARACTERE NO DISPLAY
+    lcd.print(now.year(), DEC); //IMPRIME NO DISPLAY O ANO
+    lcd.setCursor(0,1);
+    lcd.print("Hora: "); //IMPRIME O TEXTO NA SERIAL
     lcd.print(now.hour(), DEC); //IMPRIME NO MONITOR SERIAL A HORA
     lcd.print(':'); //IMPRIME O CARACTERE NO MONITOR SERIAL
     lcd.print(now.minute(), DEC); //IMPRIME NO MONITOR SERIAL OS MINUTOS
     lcd.print(':'); //IMPRIME O CARACTERE NO MONITOR SERIAL
     lcd.print(now.second(), DEC); //IMPRIME NO MONITOR SERIAL OS SEGUNDOS
-    lcd.println(); //QUEBRA DE LINHA NA SERIAL
-
 
     delay(1000); //INTERVALO DE 1 SEGUNDO
 }
