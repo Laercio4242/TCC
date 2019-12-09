@@ -141,7 +141,7 @@ void loop() {
 
     if (horaDoShow)
     {
-        lcd.clear();
+        lcd.clear();        
         lcd.backlight();
         lcd.setCursor(4,0);
         if(hora < 10) lcd.print(" ");
@@ -160,14 +160,21 @@ void loop() {
         lcd.print(mes);
         lcd.print("/");
         lcd.print(ano);
-    } 
+    }
+
+    if (horaDoShow == false)
+    {  
+        minuto = 00;
+        segundo = 00;
+    }
+    
 
     if (pararTime())
     {
         lcd.clear();
         lcd.backlight();
         lcd.setCursor(0,0);
-        lcd.print("TEMPO FINAL: "); //IMPRIME O TEXTO NA SERIAL
+        lcd.print("PERCORRIDO: "); //IMPRIME O TEXTO NA SERIAL 
         lcd.print(minuto); //IMPRIME NO MONITOR SERIAL A HORA
         lcd.print(':'); //IMPRIME O CARACTERE NO MONITOR SERIAL
         lcd.print(segundo); //IMPRIME NO MONITOR SERIAL OS MINUTOS
