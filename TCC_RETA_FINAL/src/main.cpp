@@ -23,13 +23,14 @@ char daysOfTheWeek[7][12] = {"Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"};
 // ===================== METODOS E FUNÇÕES ======================//
 int pulsoInicio(); //Função que gera o pulso de trigger
 int pulsoStop(); //Função que gera o pulso de trigger
-bool ativaTime();
+bool ativarTime();
 bool pararTime();
 // ===================== METODOS E FUNÇÕES ======================//
 
 // ===================== VARIAVEIS E CONSTANTES ======================//
 float pulse; //Variável que armazena o tempo de duração do echo
 float dist_cm; //Variável que armazena o valor da distância em centímetros
+bool horaDoShow = false;
 const int DISTANCIA = 50;
 
 // --- Protótipo das Funções ---
@@ -47,9 +48,9 @@ int    T2_aux = 0x00;                                //contador auxiliar para o 
 short  hora          =   00, 
        minuto        =   00,
        segundo       =   00,  
-       dia           =   6,
-       mes           =   2;
-int    ano           =   2018;
+       dia           =   9,
+       mes           =   12;
+int    ano           =   2019;
 // ===================== VARIAVEIS E CONSTANTES ======================//
 
 // --- Interrupção ---
@@ -104,13 +105,13 @@ void setup() {
         Serial.println("DS3231 OK!"); //IMPRIME O TEXTO NO MONITOR SERIAL
         //REMOVA O COMENTÁRIO DE UMA DAS LINHAS ABAIXO PARA INSERIR AS INFORMAÇÕES ATUALIZADAS EM SEU RTC
         //rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); //CAPTURA A DATA E HORA EM QUE O SKETCH É COMPILADO
-        rtc.adjust(DateTime(2019, 12, 9, 00, 00, 00)); //(ANO), (MÊS), (DIA), (HORA), (MINUTOS), (SEGUNDOS)
+        //rtc.adjust(DateTime(2019, 12, 9, 00, 00, 00)); //(ANO), (MÊS), (DIA), (HORA), (MINUTOS), (SEGUNDOS)
     }
     Serial.begin(9600); //Inicia comunicação serial
 }
 
 void loop() {
-    DateTime now = rtc.now(); //CHAMADA DE FUNÇÃO
+    // DateTime now = rtc.now(); //CHAMADA DE FUNÇÃO
 
     // Print a message to the LCD.
     lcd.clear();
@@ -121,15 +122,6 @@ void loop() {
     // lcd.print(':'); //IMPRIME O CARACTERE NO MONITOR SERIAL
     // lcd.print(now.second()); //IMPRIME NO MONITOR SERIAL OS MINUTOS
 
-    lcd.setCursor(0,0);
-    if(hora < 10) lcd.print(" ");
-    lcd.print(hora);
-    lcd.print(":");
-    if(minuto < 10) lcd.print(" ");
-    lcd.print(minuto);
-    lcd.print(":");
-    if(segundo < 10) lcd.print(" ");
-    lcd.print(segundo);
     lcd.setCursor(3,1);
     if(dia < 10) lcd.print(" ");
     lcd.print(dia);
@@ -139,20 +131,50 @@ void loop() {
     lcd.print("/");
     lcd.print(ano);
 
+    // min = (now.minute());
+    // seg = (now.second());
 
-    min = (now.minute());
-    seg = (now.second());
+    if (ativarTime())
+    {
+        horaDoShow = true;
+    }
+
+    if (horaDoShow)
+    {
+        lcd.clear();
+        lcd.backlight();
+        lcd.setCursor(4,0);
+        if(hora < 10) lcd.print(" ");
+        lcd.print(hora);
+        lcd.print(":");
+        if(minuto < 10) lcd.print(" ");
+        lcd.print(minuto);
+        lcd.print(":");
+        if(segundo < 10) lcd.print(" ");
+        lcd.print(segundo);
+        lcd.setCursor(3,1);
+        if(dia < 10) lcd.print(" ");
+        lcd.print(dia);
+        lcd.print("/");
+        if(mes < 10) lcd.print(" ");
+        lcd.print(mes);
+        lcd.print("/");
+        lcd.print(ano);
+    } 
 
     if (pararTime())
     {
         lcd.clear();
         lcd.backlight();
-        lcd.setCursor(1,0);
-        lcd.print("FIM: "); //IMPRIME O TEXTO NA SERIAL
+        lcd.setCursor(0,0);
+        lcd.print("TEMPO FINAL: "); //IMPRIME O TEXTO NA SERIAL
         lcd.print(minuto); //IMPRIME NO MONITOR SERIAL A HORA
         lcd.print(':'); //IMPRIME O CARACTERE NO MONITOR SERIAL
         lcd.print(segundo); //IMPRIME NO MONITOR SERIAL OS MINUTOS
         delay(7000);
+        horaDoShow = false;
+        minuto = 00;
+        segundo = 00;
     }
 
     Serial.print("START: ");
